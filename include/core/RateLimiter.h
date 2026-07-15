@@ -13,7 +13,7 @@ public:
     ratelimiter::models::Response check(const std::string& key);
     ratelimiter::models::Response status(const std::string& key);
     void updateConfig(const ratelimiter::models::Config& newConfig);
-    ratelimiter::models::Config getConfig() const;
+    ratelimiter::models::Config getConfig();
 
 private:
     ratelimiter::models::Config _config;
