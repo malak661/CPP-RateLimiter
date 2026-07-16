@@ -1,10 +1,6 @@
-#ifndef MODELS_REQUEST_H
-#define MODELS_REQUEST_H
+#pragma once
 
 #include <string>
-
-namespace ratelimiter {
-namespace models {
 
 // Represents an incoming client request after basic parsing,
 // before it reaches the core rate-limiting logic.
@@ -31,8 +27,3 @@ struct Request {
           newCapacity(0.0),
           newRefillRate(0.0) {}
 };
-
-} // namespace models
-} // namespace ratelimiter
-
-#endif // MODELS_REQUEST_H

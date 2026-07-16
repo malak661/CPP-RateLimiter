@@ -1,14 +1,12 @@
 #include "storage/BucketStore.h"
 
-using namespace ratelimiter;
-
-models::Bucket& BucketStore::create(const std::string& key,
-                                     const models::Config& config) {
-    auto [it, _] = _store.emplace(key, models::Bucket(key, config.capacity, config.refillRate));
+Bucket& BucketStore::create(const std::string& key,
+                             const Config& config) {
+    auto [it, _] = _store.emplace(key, Bucket(key, config.capacity, config.refillRate));
     return it->second;
 }
 
-models::Bucket* BucketStore::find(const std::string& key) {
+Bucket* BucketStore::find(const std::string& key) {
     auto it = _store.find(key);
     if (it == _store.end()) return nullptr;
     return &it->second;

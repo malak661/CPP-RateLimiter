@@ -3,25 +3,22 @@
 #include "constants/Constants.h"
 #include <sstream>
 
-namespace ratelimiter {
-namespace api {
-
-RequestHandler::RequestHandler(core::RateLimiter& rateLimiter)
+RequestHandler::RequestHandler(RateLimiter& rateLimiter)
     : rateLimiter_(rateLimiter) {}
 
 std::string RequestHandler::extractClientKey(const std::string& clientKeyHeader) const {
     if (clientKeyHeader.empty()) {
-        throw exceptions::InvalidRequestException("Missing client key");
+        throw InvalidRequestException("Missing client key");
     }
     return clientKeyHeader;
 }
 
-models::Request RequestHandler::parseConfigBody(const std::string& clientKey,
-                                                 const std::string& body) const {
-    models::Request request(clientKey, constants::ENDPOINT_CONFIG);
+Request RequestHandler::parseConfigBody(const std::string& clientKey,
+                                         const std::string& body) const {
+    Request request(clientKey, ENDPOINT_CONFIG);
 
     if (body.empty()) {
-        throw exceptions::InvalidRequestException("Empty config body");
+        throw InvalidRequestException("Empty config body");
     }
 
     // Expected format: "capacity=10&refillRate=2"
@@ -47,12 +44,12 @@ models::Request RequestHandler::parseConfigBody(const std::string& clientKey,
                 refillRate = std::stod(value);
             }
         } catch (const std::exception&) {
-            throw exceptions::InvalidRequestException("Invalid numeric value for " + key);
+            throw InvalidRequestException("Invalid numeric value for " + key);
         }
     }
 
     if (capacity <= 0.0 || refillRate < 0.0) {
-        throw exceptions::InvalidRequestException(
+        throw InvalidRequestException(
             "capacity must be > 0 and refillRate must be >= 0"
         );
     }
@@ -64,28 +61,25 @@ models::Request RequestHandler::parseConfigBody(const std::string& clientKey,
     return request;
 }
 
-models::Response RequestHandler::handle(const std::string& path,
-                                         const std::string& clientKeyHeader,
-                                         const std::string& body) {
+Response RequestHandler::handle(const std::string& path,
+                                 const std::string& clientKeyHeader,
+                                 const std::string& body) {
     std::string clientKey = extractClientKey(clientKeyHeader);
 
-    if (path == constants::ENDPOINT_CHECK) {
-        models::Request request(clientKey, constants::ENDPOINT_CHECK);
+    if (path == ENDPOINT_CHECK) {
+        Request request(clientKey, ENDPOINT_CHECK);
         return rateLimiter_.checkRequest(request);
     }
 
-    if (path == constants::ENDPOINT_STATUS) {
-        models::Request request(clientKey, constants::ENDPOINT_STATUS);
+    if (path == ENDPOINT_STATUS) {
+        Request request(clientKey, ENDPOINT_STATUS);
         return rateLimiter_.getStatus(request);
     }
 
-    if (path == constants::ENDPOINT_CONFIG) {
-        models::Request request = parseConfigBody(clientKey, body);
+    if (path == ENDPOINT_CONFIG) {
+        Request request = parseConfigBody(clientKey, body);
         return rateLimiter_.updateConfig(request);
     }
 
-    throw exceptions::InvalidRequestException("Unknown endpoint: " + path);
+    throw InvalidRequestException("Unknown endpoint: " + path);
 }
-
-} // namespace api
-} // namespace ratelimiter

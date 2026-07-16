@@ -5,6 +5,6 @@
 
 class DecisionEngine {
 public:
-    static ratelimiter::models::Response evaluate(ratelimiter::models::Bucket& bucket);
-    static ratelimiter::models::Response statusOf(ratelimiter::models::Bucket& bucket);
+    static Response evaluate(Bucket& bucket);
+    static Response statusOf(Bucket& bucket);
 };

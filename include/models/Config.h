@@ -1,8 +1,4 @@
-#ifndef MODELS_CONFIG_H
-#define MODELS_CONFIG_H
-
-namespace ratelimiter {
-namespace models {
+#pragma once
 
 // Holds the rate-limiting configuration values.
 // Used both as the default/global config and for per-request config updates.
@@ -16,8 +12,3 @@ struct Config {
     Config(double capacity_, double refillRate_)
         : capacity(capacity_), refillRate(refillRate_) {}
 };
-
-} // namespace models
-} // namespace ratelimiter
-
-#endif // MODELS_CONFIG_H

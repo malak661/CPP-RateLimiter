@@ -1,11 +1,7 @@
-#ifndef MODELS_BUCKET_H
-#define MODELS_BUCKET_H
+#pragma once
 
 #include <string>
 #include <chrono>
-
-namespace ratelimiter {
-namespace models {
 
 // Represents a single client's token bucket state.
 struct Bucket {
@@ -32,8 +28,3 @@ struct Bucket {
           refillRate(refillRate_),
           lastUpdate(std::chrono::steady_clock::now()) {}
 };
-
-} // namespace models
-} // namespace ratelimiter
-
-#endif // MODELS_BUCKET_H

@@ -2,14 +2,12 @@
 #include "core/TokenBucket.h"
 #include "constants/Constants.h"
 
-using namespace ratelimiter;
-
-models::Response DecisionEngine::evaluate(models::Bucket& bucket) {
-    bool allowed = core::TokenBucket::tryConsume(bucket);
+Response DecisionEngine::evaluate(Bucket& bucket) {
+    bool allowed = TokenBucket::tryConsume(bucket);
 
     if (allowed) {
-        return models::Response(
-            constants::HTTP_OK,
+        return Response(
+            HTTP_OK,
             true,
             bucket.availableTokens,
             0.0,
@@ -17,9 +15,9 @@ models::Response DecisionEngine::evaluate(models::Bucket& bucket) {
         );
     }
 
-    double retryAfter = core::TokenBucket::getRetryAfterSeconds(bucket);
-    return models::Response(
-        constants::HTTP_TOO_MANY_REQUESTS,
+    double retryAfter = TokenBucket::getRetryAfterSeconds(bucket);
+    return Response(
+        HTTP_TOO_MANY_REQUESTS,
         false,
         bucket.availableTokens,
         retryAfter,
@@ -27,10 +25,10 @@ models::Response DecisionEngine::evaluate(models::Bucket& bucket) {
     );
 }
 
-models::Response DecisionEngine::statusOf(models::Bucket& bucket) {
-    double tokens = core::TokenBucket::peekAvailableTokens(bucket);
-    return models::Response(
-        constants::HTTP_OK,
+Response DecisionEngine::statusOf(Bucket& bucket) {
+    double tokens = TokenBucket::peekAvailableTokens(bucket);
+    return Response(
+        HTTP_OK,
         true,
         tokens,
         0.0,

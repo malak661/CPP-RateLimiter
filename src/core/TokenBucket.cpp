@@ -2,10 +2,6 @@
 #include <algorithm>
 #include <chrono>
 
-namespace ratelimiter {
-namespace core {
-
-using models::Bucket;
 using Clock = std::chrono::steady_clock;
 
 void TokenBucket::refill(Bucket& bucket) {
@@ -56,6 +52,3 @@ double TokenBucket::getRetryAfterSeconds(Bucket& bucket) {
     double tokensNeeded = 1.0 - bucket.availableTokens;
     return tokensNeeded / bucket.refillRate;
 }
-
-} // namespace core
-} // namespace ratelimiter

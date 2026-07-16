@@ -1,11 +1,7 @@
-#ifndef EXCEPTIONS_INVALIDREQUESTEXCEPTION_H
-#define EXCEPTIONS_INVALIDREQUESTEXCEPTION_H
+#pragma once
 
 #include <exception>
 #include <string>
-
-namespace ratelimiter {
-namespace exceptions {
 
 // Thrown when an incoming request is missing required fields,
 // has an invalid client key, or contains invalid config values.
@@ -21,8 +17,3 @@ public:
 private:
     std::string message_;
 };
-
-} // namespace exceptions
-} // namespace ratelimiter
-
-#endif // EXCEPTIONS_INVALIDREQUESTEXCEPTION_H

@@ -1,8 +1,4 @@
-#ifndef CONSTANTS_CONSTANTS_H
-#define CONSTANTS_CONSTANTS_H
-
-namespace ratelimiter {
-namespace constants {
+#pragma once
 
 // Default configuration used when no client-specific config exists yet.
 constexpr double DEFAULT_BUCKET_CAPACITY = 10.0;   // max tokens
@@ -18,8 +14,3 @@ constexpr int HTTP_INTERNAL_ERROR = 500;
 constexpr const char* ENDPOINT_CHECK = "/check";
 constexpr const char* ENDPOINT_STATUS = "/status";
 constexpr const char* ENDPOINT_CONFIG = "/config";
-
-} // namespace constants
-} // namespace ratelimiter
-
-#endif // CONSTANTS_CONSTANTS_H

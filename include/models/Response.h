@@ -1,10 +1,6 @@
-#ifndef MODELS_RESPONSE_H
-#define MODELS_RESPONSE_H
+#pragma once
 
 #include <string>
-
-namespace ratelimiter {
-namespace models {
 
 // Represents the outgoing response returned to the client,
 // built by the API layer from the core logic's decision.
@@ -30,8 +26,3 @@ struct Response {
           retryAfterSeconds(retryAfterSeconds_),
           message(message_) {}
 };
-
-} // namespace models
-} // namespace ratelimiter
-
-#endif // MODELS_RESPONSE_H
