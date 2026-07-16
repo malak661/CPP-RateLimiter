@@ -1,37 +1,18 @@
 #include "core/DecisionEngine.h"
 #include "core/TokenBucket.h"
-#include "constants/Constants.h"
 
 Response DecisionEngine::evaluate(Bucket& bucket) {
     bool allowed = TokenBucket::tryConsume(bucket);
 
     if (allowed) {
-        return Response(
-            HTTP_OK,
-            true,
-            bucket.availableTokens,
-            0.0,
-            "Request allowed."
-        );
+        return Response(200, true, bucket.availableTokens, 0.0, "Request allowed.");
     }
 
     double retryAfter = TokenBucket::getRetryAfterSeconds(bucket);
-    return Response(
-        HTTP_TOO_MANY_REQUESTS,
-        false,
-        bucket.availableTokens,
-        retryAfter,
-        "Rate limit exceeded."
-    );
+    return Response(429, false, bucket.availableTokens, retryAfter, "Rate limit exceeded.");
 }
 
 Response DecisionEngine::statusOf(Bucket& bucket) {
     double tokens = TokenBucket::peekAvailableTokens(bucket);
-    return Response(
-        HTTP_OK,
-        true,
-        tokens,
-        0.0,
-        "Status retrieved."
-    );
+    return Response(200, true, tokens, 0.0, "Status retrieved.");
 }

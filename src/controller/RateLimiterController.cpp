@@ -1,6 +1,5 @@
 #include "controller/RateLimiterController.h"
 #include "exceptions/InvalidRequestException.h"
-#include "constants/Constants.h"
 #include "models/Config.h"
 #include <nlohmann/json.hpp>
 
@@ -54,14 +53,14 @@ crow::response RateLimiterController::_check(const crow::request& req) {
         return crowRes;
     }
     catch (const InvalidRequestException& e) {
-        ordered_json resJson = {{"status", HTTP_BAD_REQUEST}, {"message", e.what()}};
-        crow::response res(HTTP_BAD_REQUEST, resJson.dump());
+        ordered_json resJson = {{"status", crow::status::BAD_REQUEST}, {"message", e.what()}};
+        crow::response res(crow::status::BAD_REQUEST, resJson.dump());
         res.set_header("Content-Type", "application/json");
         return res;
     }
     catch (const std::exception& e) {
-        ordered_json resJson = {{"status", HTTP_INTERNAL_ERROR}, {"message", e.what()}};
-        crow::response res(HTTP_INTERNAL_ERROR, resJson.dump());
+        ordered_json resJson = {{"status", crow::status::INTERNAL_SERVER_ERROR}, {"message", e.what()}};
+        crow::response res(crow::status::INTERNAL_SERVER_ERROR, resJson.dump());
         res.set_header("Content-Type", "application/json");
         return res;
     }
@@ -80,19 +79,19 @@ crow::response RateLimiterController::_status(const std::string& clientKey) {
         resJson["remainingTokens"] = res.remainingTokens;
         resJson["message"]         = res.message;
 
-        crow::response crowRes(HTTP_OK, resJson.dump());
+        crow::response crowRes(crow::status::OK, resJson.dump());
         crowRes.set_header("Content-Type", "application/json");
         return crowRes;
     }
     catch (const InvalidRequestException& e) {
-        ordered_json resJson = {{"status", HTTP_BAD_REQUEST}, {"message", e.what()}};
-        crow::response res(HTTP_BAD_REQUEST, resJson.dump());
+        ordered_json resJson = {{"status", crow::status::BAD_REQUEST}, {"message", e.what()}};
+        crow::response res(crow::status::BAD_REQUEST, resJson.dump());
         res.set_header("Content-Type", "application/json");
         return res;
     }
     catch (const std::exception& e) {
-        ordered_json resJson = {{"status", HTTP_INTERNAL_ERROR}, {"message", e.what()}};
-        crow::response res(HTTP_INTERNAL_ERROR, resJson.dump());
+        ordered_json resJson = {{"status", crow::status::INTERNAL_SERVER_ERROR}, {"message", e.what()}};
+        crow::response res(crow::status::INTERNAL_SERVER_ERROR, resJson.dump());
         res.set_header("Content-Type", "application/json");
         return res;
     }
@@ -120,19 +119,19 @@ crow::response RateLimiterController::_updateConfig(const crow::request& req) {
         resJson["capacity"]   = capacity;
         resJson["refillRate"] = refillRate;
 
-        crow::response crowRes(HTTP_OK, resJson.dump());
+        crow::response crowRes(crow::status::OK, resJson.dump());
         crowRes.set_header("Content-Type", "application/json");
         return crowRes;
     }
     catch (const InvalidRequestException& e) {
-        ordered_json resJson = {{"status", HTTP_BAD_REQUEST}, {"message", e.what()}};
-        crow::response res(HTTP_BAD_REQUEST, resJson.dump());
+        ordered_json resJson = {{"status", crow::status::BAD_REQUEST}, {"message", e.what()}};
+        crow::response res(crow::status::BAD_REQUEST, resJson.dump());
         res.set_header("Content-Type", "application/json");
         return res;
     }
     catch (const std::exception& e) {
-        ordered_json resJson = {{"status", HTTP_INTERNAL_ERROR}, {"message", e.what()}};
-        crow::response res(HTTP_INTERNAL_ERROR, resJson.dump());
+        ordered_json resJson = {{"status", crow::status::INTERNAL_SERVER_ERROR}, {"message", e.what()}};
+        crow::response res(crow::status::INTERNAL_SERVER_ERROR, resJson.dump());
         res.set_header("Content-Type", "application/json");
         return res;
     }

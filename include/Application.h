@@ -11,6 +11,7 @@ public:
     void run();
 
 private:
+    int _port;
     std::shared_ptr<crow::SimpleApp> _app;
     std::shared_ptr<RateLimiter> _rateLimiter;
     std::unique_ptr<RateLimiterController> _controller;

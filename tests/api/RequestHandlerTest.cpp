@@ -1,6 +1,5 @@
 #include "core/RateLimiter.h"
 #include "models/Config.h"
-#include "constants/Constants.h"
 #include <cassert>
 #include <iostream>
 
@@ -11,7 +10,7 @@ static RateLimiter makeRateLimiter(double capacity = 5.0, double refillRate = 1.
 void test_check_allows_first_request() {
     auto rl = makeRateLimiter();
     Response res = rl.check("clientA");
-    assert(res.statusCode == HTTP_OK);
+    assert(res.statusCode == 200);
     assert(res.allowed == true);
     std::cout << "test_check_allows_first_request passed\n";
 }
@@ -20,7 +19,7 @@ void test_check_rate_limits_after_exhaustion() {
     auto rl = makeRateLimiter(1.0, 0.0);
     rl.check("clientX");
     Response res = rl.check("clientX");
-    assert(res.statusCode == HTTP_TOO_MANY_REQUESTS);
+    assert(res.statusCode == 429);
     assert(res.allowed == false);
     std::cout << "test_check_rate_limits_after_exhaustion passed\n";
 }
@@ -29,7 +28,7 @@ void test_status_returns_tokens() {
     auto rl = makeRateLimiter(5.0, 0.0);
     rl.check("clientB");
     Response res = rl.status("clientB");
-    assert(res.statusCode == HTTP_OK);
+    assert(res.statusCode == 200);
     assert(res.remainingTokens == 4.0);
     std::cout << "test_status_returns_tokens passed\n";
 }
