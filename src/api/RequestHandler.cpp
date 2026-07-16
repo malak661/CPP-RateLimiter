@@ -67,18 +67,18 @@ Response RequestHandler::handle(const std::string& path,
     std::string clientKey = extractClientKey(clientKeyHeader);
 
     if (path == ENDPOINT_CHECK) {
-        Request request(clientKey, ENDPOINT_CHECK);
-        return rateLimiter_.checkRequest(request);
+        return rateLimiter_.check(clientKey);
     }
 
     if (path == ENDPOINT_STATUS) {
-        Request request(clientKey, ENDPOINT_STATUS);
-        return rateLimiter_.getStatus(request);
+        return rateLimiter_.status(clientKey);
     }
 
     if (path == ENDPOINT_CONFIG) {
         Request request = parseConfigBody(clientKey, body);
-        return rateLimiter_.updateConfig(request);
+        Config newConfig(request.newCapacity, request.newRefillRate);
+        rateLimiter_.updateConfig(newConfig);
+        return Response(HTTP_OK, true, 0.0, 0.0, "Config updated.");
     }
 
     throw InvalidRequestException("Unknown endpoint: " + path);
