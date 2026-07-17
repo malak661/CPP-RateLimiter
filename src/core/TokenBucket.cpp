@@ -6,18 +6,12 @@ using Clock = std::chrono::steady_clock;
 
 void TokenBucket::refill(Bucket& bucket) {
     Clock::time_point now = Clock::now();
+    double elapsed = std::chrono::duration<double>(now - bucket.lastUpdate).count();
 
-    std::chrono::duration<double> elapsed = now - bucket.lastUpdate;
-    double elapsedSeconds = elapsed.count();
-
-    if (elapsedSeconds > 0.0) {
-        double tokensToAdd = elapsedSeconds * bucket.refillRate;
-        bucket.availableTokens = std::min(
-            bucket.capacity,
-            bucket.availableTokens + tokensToAdd
-        );
-    }
-
+    bucket.availableTokens = std::min(
+        bucket.capacity,
+        bucket.availableTokens + elapsed * bucket.refillRate
+    );
     bucket.lastUpdate = now;
 }
 
@@ -44,11 +38,5 @@ double TokenBucket::getRetryAfterSeconds(Bucket& bucket) {
         return 0.0;
     }
 
-    if (bucket.refillRate <= 0.0) {
-        // Bucket will never refill; caller should treat this as blocked indefinitely.
-        return -1.0;
-    }
-
-    double tokensNeeded = 1.0 - bucket.availableTokens;
-    return tokensNeeded / bucket.refillRate;
+    return (1.0 - bucket.availableTokens) / bucket.refillRate;
 }

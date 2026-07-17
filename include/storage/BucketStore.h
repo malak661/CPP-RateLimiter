@@ -7,10 +7,7 @@
 
 class BucketStore {
 public:
-    Bucket& create(const std::string& key,
-                   const Config& config);
-
-    Bucket* find(const std::string& key);
+    Bucket& getOrCreate(const std::string& key, const Config& config);
 
 private:
     std::unordered_map<std::string, Bucket> _store;

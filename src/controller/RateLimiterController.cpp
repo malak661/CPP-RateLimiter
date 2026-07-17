@@ -115,8 +115,8 @@ crow::response RateLimiterController::_updateConfig(const crow::request& req) {
         double capacity   = body.value("capacity",   current.capacity);
         double refillRate = body.value("refillRate", current.refillRate);
 
-        if (capacity <= 0.0 || refillRate < 0.0) {
-            throw InvalidRequestException("capacity must be > 0 and refillRate must be >= 0");
+        if (capacity <= 0.0 || refillRate <= 0.0) {
+            throw InvalidRequestException("capacity must be > 0 and refillRate must be > 0");
         }
 
         _rateLimiter->updateConfig(Config(capacity, refillRate));
