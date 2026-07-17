@@ -16,9 +16,9 @@ RateLimiterController::RateLimiterController(
 }
 
 void RateLimiterController::_registerRoutes() {
-    CROW_ROUTE((*_app), "/api/check").methods(crow::HTTPMethod::POST)
-    ([this](const crow::request& req) {
-        return _check(req);
+    CROW_ROUTE((*_app), "/api/check/<string>").methods(crow::HTTPMethod::POST)
+    ([this](const std::string& clientKey) {
+        return _check(clientKey);
     });
 
     CROW_ROUTE((*_app), "/api/status/<string>").methods(crow::HTTPMethod::GET)
@@ -32,15 +32,12 @@ void RateLimiterController::_registerRoutes() {
     });
 }
 
-crow::response RateLimiterController::_check(const crow::request& req) {
+crow::response RateLimiterController::_check(const std::string& clientKey) {
     try {
-        json body = json::parse(req.body);
-
-        if (!body.contains("clientKey") || body["clientKey"].get<std::string>().empty()) {
+        if (clientKey.empty()) {
             throw InvalidRequestException("Missing clientKey");
         }
 
-        std::string clientKey = body["clientKey"];
         Response res = _rateLimiter->check(clientKey);
 
         if (res.allowed) {
@@ -59,12 +56,6 @@ crow::response RateLimiterController::_check(const crow::request& req) {
         crow::response crowRes(res.statusCode, resJson.dump());
         crowRes.set_header("Content-Type", "application/json");
         return crowRes;
-    }
-    catch (const nlohmann::json::parse_error&) {
-        ordered_json resJson = {{"status", crow::status::BAD_REQUEST}, {"message", "Invalid JSON body"}};
-        crow::response res(crow::status::BAD_REQUEST, resJson.dump());
-        res.set_header("Content-Type", "application/json");
-        return res;
     }
     catch (const InvalidRequestException& e) {
         ordered_json resJson = {{"status", crow::status::BAD_REQUEST}, {"message", e.what()}};

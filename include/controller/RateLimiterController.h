@@ -12,7 +12,7 @@ public:
 private:
     void _registerRoutes();
 
-    crow::response _check(const crow::request& req);
+    crow::response _check(const std::string& clientKey);
     crow::response _status(const std::string& clientKey);
     crow::response _updateConfig(const crow::request& req);
 
