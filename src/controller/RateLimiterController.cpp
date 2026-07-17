@@ -26,7 +26,7 @@ void RateLimiterController::_registerRoutes() {
         return _status(clientKey);
     });
 
-    CROW_ROUTE((*_app), "/api/config").methods(crow::HTTPMethod::PUT)
+    CROW_ROUTE((*_app), "/api/config").methods(crow::HTTPMethod::PATCH)
     ([this](const crow::request& req) {
         return _updateConfig(req);
     });
@@ -111,12 +111,9 @@ crow::response RateLimiterController::_updateConfig(const crow::request& req) {
     try {
         json body = json::parse(req.body);
 
-        if (!body.contains("capacity") || !body.contains("refillRate")) {
-            throw InvalidRequestException("Body must contain capacity and refillRate");
-        }
-
-        double capacity   = body["capacity"].get<double>();
-        double refillRate = body["refillRate"].get<double>();
+        Config current    = _rateLimiter->getConfig();
+        double capacity   = body.value("capacity",   current.capacity);
+        double refillRate = body.value("refillRate", current.refillRate);
 
         if (capacity <= 0.0 || refillRate < 0.0) {
             throw InvalidRequestException("capacity must be > 0 and refillRate must be >= 0");
