@@ -21,7 +21,7 @@ void RateLimiter::updateConfig(const Config& newConfig) {
     _config = newConfig;
 }
 
-Config RateLimiter::getConfig() {
+Config RateLimiter::getConfig() const {
     std::lock_guard<std::mutex> lock(_mutex);
     return _config;
 }

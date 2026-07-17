@@ -13,10 +13,10 @@ public:
     Response check(const std::string& key);
     Response status(const std::string& key);
     void updateConfig(const Config& newConfig);
-    Config getConfig();
+    Config getConfig() const;
 
 private:
     Config _config;
     BucketStore _store;
-    std::mutex _mutex;
+    mutable std::mutex _mutex;
 };

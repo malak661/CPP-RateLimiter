@@ -38,5 +38,9 @@ double TokenBucket::getRetryAfterSeconds(Bucket& bucket) {
         return 0.0;
     }
 
+    if (bucket.refillRate <= 0.0) {
+        return 0.0;
+    }
+
     return (1.0 - bucket.availableTokens) / bucket.refillRate;
 }

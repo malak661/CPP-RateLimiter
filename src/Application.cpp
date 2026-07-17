@@ -19,6 +19,10 @@ Application::Application() {
         _port      = cfg.value("port",           8080);
     }
 
+    if (capacity <= 0.0 || refillRate <= 0.0) {
+        throw std::runtime_error("Invalid config: capacity and refillRate must be > 0");
+    }
+
     _app         = std::make_shared<crow::SimpleApp>();
     _rateLimiter = std::make_shared<RateLimiter>(Config(capacity, refillRate));
     _controller  = std::make_unique<RateLimiterController>(_rateLimiter, _app);

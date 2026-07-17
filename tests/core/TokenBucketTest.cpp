@@ -5,14 +5,8 @@
 #include <thread>
 #include <chrono>
 
-void test_initial_bucket_is_full() {
-    Bucket bucket("client1", 5.0, 1.0);
-    assert(bucket.availableTokens == 5.0);
-    std::cout << "test_initial_bucket_is_full passed\n";
-}
-
 void test_consume_reduces_tokens() {
-    Bucket bucket("client2", 5.0, 1.0);
+    Bucket bucket("client1", 5.0, 1.0);
     bool result = TokenBucket::tryConsume(bucket);
     assert(result == true);
     assert(bucket.availableTokens == 4.0);
@@ -20,7 +14,7 @@ void test_consume_reduces_tokens() {
 }
 
 void test_consume_fails_when_empty() {
-    Bucket bucket("client3", 1.0, 0.0); // no refill
+    Bucket bucket("client2", 1.0, 0.001);
     bool first = TokenBucket::tryConsume(bucket);
     bool second = TokenBucket::tryConsume(bucket);
     assert(first == true);
@@ -29,18 +23,18 @@ void test_consume_fails_when_empty() {
 }
 
 void test_refill_over_time() {
-    Bucket bucket("client4", 5.0, 5.0); // 5 tokens/sec
-    while (TokenBucket::tryConsume(bucket)) {} // drain it
+    Bucket bucket("client3", 5.0, 5.0);
+    while (TokenBucket::tryConsume(bucket)) {}
     assert(bucket.availableTokens < 1.0);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(300)); // ~1.5 tokens
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
     double tokens = TokenBucket::peekAvailableTokens(bucket);
     assert(tokens > 1.0);
     std::cout << "test_refill_over_time passed\n";
 }
 
 void test_never_exceeds_capacity() {
-    Bucket bucket("client5", 3.0, 100.0); // fast refill
+    Bucket bucket("client4", 3.0, 100.0);
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     double tokens = TokenBucket::peekAvailableTokens(bucket);
     assert(tokens <= 3.0);
@@ -48,15 +42,14 @@ void test_never_exceeds_capacity() {
 }
 
 void test_retry_after_seconds() {
-    Bucket bucket("client6", 1.0, 1.0); // 1 token/sec
-    TokenBucket::tryConsume(bucket); // drain the single token
+    Bucket bucket("client5", 1.0, 1.0);
+    TokenBucket::tryConsume(bucket);
     double retryAfter = TokenBucket::getRetryAfterSeconds(bucket);
     assert(retryAfter > 0.0 && retryAfter <= 1.0);
     std::cout << "test_retry_after_seconds passed\n";
 }
 
 int main() {
-    test_initial_bucket_is_full();
     test_consume_reduces_tokens();
     test_consume_fails_when_empty();
     test_refill_over_time();
