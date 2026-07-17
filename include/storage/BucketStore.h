@@ -8,6 +8,7 @@
 class BucketStore {
 public:
     Bucket& getOrCreate(const std::string& key, const Config& config);
+    void updateAll(const Config& config);
 
 private:
     std::unordered_map<std::string, Bucket> _store;

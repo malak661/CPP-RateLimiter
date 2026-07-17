@@ -19,6 +19,7 @@ Response RateLimiter::status(const std::string& key) {
 void RateLimiter::updateConfig(const Config& newConfig) {
     std::lock_guard<std::mutex> lock(_mutex);
     _config = newConfig;
+    _store.updateAll(newConfig);
 }
 
 Config RateLimiter::getConfig() const {

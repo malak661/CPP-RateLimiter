@@ -41,10 +41,29 @@ void test_different_clients_have_independent_buckets() {
     std::cout << "test_different_clients_have_independent_buckets passed\n";
 }
 
+void test_update_all_modifies_existing_buckets() {
+    BucketStore store;
+    Config config(10.0, 1.0);
+
+    Bucket& bucket = store.getOrCreate("clientE", config);
+    bucket.availableTokens = 8.0;
+
+    Config newConfig(3.0, 0.1667);
+    store.updateAll(newConfig);
+
+    Bucket& updated = store.getOrCreate("clientE", newConfig);
+    assert(updated.capacity == 3.0);
+    assert(updated.refillRate == 0.1667);
+    assert(updated.availableTokens == 3.0);
+
+    std::cout << "test_update_all_modifies_existing_buckets passed\n";
+}
+
 int main() {
     test_creates_bucket_for_new_key();
     test_returns_same_bucket_on_second_call();
     test_different_clients_have_independent_buckets();
+    test_update_all_modifies_existing_buckets();
 
     std::cout << "\nAll BucketStore tests passed.\n";
     return 0;

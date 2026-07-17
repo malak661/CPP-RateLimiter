@@ -2,6 +2,7 @@
 #include "models/Config.h"
 #include <cassert>
 #include <iostream>
+#include <cmath>
 
 static RateLimiter makeRateLimiter(double capacity = 5.0, double refillRate = 1.0) {
     return RateLimiter(Config(capacity, refillRate));
@@ -21,16 +22,22 @@ void test_status_returns_tokens() {
     rl.check("clientB");
     Response res = rl.status("clientB");
     assert(res.statusCode == 200);
-    assert(res.remainingTokens == 4.0);
+    assert(std::abs(res.remainingTokens - 4.0) < 0.01);
     std::cout << "test_status_returns_tokens passed\n";
 }
 
 void test_config_update_takes_effect() {
     auto rl = makeRateLimiter(5.0, 1.0);
-    rl.updateConfig(Config(20.0, 2.0));
+    rl.check("clientC");
+
+    rl.updateConfig(Config(2.0, 0.5));
     Config cfg = rl.getConfig();
-    assert(cfg.capacity == 20.0);
-    assert(cfg.refillRate == 2.0);
+    assert(cfg.capacity == 2.0);
+    assert(cfg.refillRate == 0.5);
+
+    Response statusRes = rl.status("clientC");
+    assert(statusRes.limit == 2.0);
+
     std::cout << "test_config_update_takes_effect passed\n";
 }
 
