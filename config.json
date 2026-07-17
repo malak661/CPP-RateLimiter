@@ -1,5 +1,5 @@
 {
-    "bucketCapacity": 10.0,
-    "refillRate": 1.0,
+    "bucketCapacity": 3.0,
+    "refillRate": 0.16666666666666666,
     "port": 8080
 }

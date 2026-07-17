@@ -7,15 +7,15 @@
 using json = nlohmann::json;
 
 Application::Application() {
-    double capacity   = 10.0;
-    double refillRate = 1.0;
+    double capacity   = 3.0;
+    double refillRate = 10.0 / 60.0; // 10 requests per minute (0.1667 tokens/sec)
     _port             = 8080;
 
     std::ifstream configFile("config.json");
     if (configFile.is_open()) {
-        json cfg  = json::parse(configFile);
-        capacity   = cfg.value("bucketCapacity", 10.0);
-        refillRate = cfg.value("refillRate",     1.0);
+        json cfg   = json::parse(configFile);
+        capacity   = cfg.value("bucketCapacity", 3.0);
+        refillRate = cfg.value("refillRate",     10.0 / 60.0);
         _port      = cfg.value("port",           8080);
     }
 
